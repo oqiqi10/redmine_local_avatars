@@ -42,6 +42,11 @@ module LocalAvatarsPlugin
 				end
 			end
 
+			if options[:size]
+				options[:width] = options[:size]
+				options[:height] = options[:size]
+			end
+
 			avtr = avatar_without_local(user, options)
 
 			if avtr.present?
