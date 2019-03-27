@@ -36,15 +36,19 @@ module LocalAvatarsPlugin
 
 			if user.is_a?(User)then
 				av = user.attachments.find_by_description 'avatar'
+
 				if av then
 					image_url = url_for :only_path => true, :controller => 'account', :action => 'get_avatar', :id => user
-					return ActionController::Base.helpers.image_tag(image_url, options.reverse_merge(:class => 'gravatar'))
+					return image_tag(image_url, options.reverse_merge(:class => 'gravatar'))
 				end
 			end
 
+			# Pass width/height because :size is excluded in method
+			# gravatar (lib/plugins/gravatar/lib/gravatar.rb).
 			if options[:size]
 				options[:width] = options[:size]
 				options[:height] = options[:size]
+				options.delete(:size)
 			end
 
 			avtr = avatar_without_local(user, options)
@@ -52,7 +56,7 @@ module LocalAvatarsPlugin
 			if avtr.present?
 				return avtr
 			else
-				return ActionController::Base.helpers.image_tag('/plugin_assets/redmine_local_avatars/images/default.png', options.reverse_merge(:class => 'gravatar'))
+				return image_tag('default.png', options.reverse_merge(:plugin => 'redmine_local_avatars', :class => 'gravatar'))
 			end
 		end
   end
