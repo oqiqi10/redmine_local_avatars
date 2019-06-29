@@ -25,5 +25,8 @@ module RedmineLocalAvatars
 		# app/views/hooks/redmine_local_avatars/_view_my_account_contextual.rhtml
 		render_on :view_my_account_contextual,
 		           :partial => 'hooks/redmine_local_avatars/view_my_account_contextual'
+
+		render_on :view_layouts_base_body_bottom,
+		          :partial => 'hooks/redmine_local_avatars/base_body_bottom'
   end
 end
