@@ -20,6 +20,8 @@ require 'local_avatars'
 
 module LocalAvatarsPlugin
   module ApplicationAvatarPatch
+    include GravatarHelper::PublicMethods
+
     def self.included(base) # :nodoc:    
       base.class_eval do
         alias_method :avatar_without_local, :avatar
@@ -27,37 +29,34 @@ module LocalAvatarsPlugin
       end
     end
 
-		def avatar_with_local(user, options = { })
-			# Convert type because :size is passed as not string but integer
-			# in method html_subject_content (lib/redmine/helpers/gantt.rb).
-			if options[:size] && options[:size].is_a?(Integer)
-				options[:size] = options[:size].to_s
-			end
+    def avatar_with_local(user, options = {})
+      o = options.merge(class: 'gravatar')
 
-			if user.is_a?(User)then
-				av = user.attachments.find_by_description 'avatar'
+      if o[:size]
+        # Convert type because :size is passed as not string but integer
+        # in method html_subject_content (lib/redmine/helpers/gantt.rb).
+        size = o[:size].is_a?(Integer) ? o[:size].to_s : o[:size]
+        o[:size] = size
+      else
+        size = GravatarHelper::DEFAULT_OPTIONS[:size].to_s
+      end
 
-				if av then
-					image_url = url_for :only_path => true, :controller => 'account', :action => 'get_avatar', :id => user
-					return image_tag(image_url, options.reverse_merge(:class => 'gravatar'))
-				end
-			end
+      av = user.is_a?(User) ?
+             user.attachments.find_by_description('avatar') : nil
 
-			# Pass width/height because :size is excluded in method
-			# gravatar (lib/plugins/gravatar/lib/gravatar.rb).
-			if options[:size]
-				options[:width] = options[:size]
-				options[:height] = options[:size]
-				options.delete(:size)
-			end
+      if av
+        url = url_for only_path: true, controller: 'account',
+                      action: 'get_avatar', id: user
+      else
+        avtr = avatar_without_local(user, o)
 
-			avtr = avatar_without_local(user, options)
+        return avtr if avtr.present?
 
-			if avtr.present?
-				return avtr
-			else
-				return image_tag('default.png', options.reverse_merge(:plugin => 'redmine_local_avatars', :class => 'gravatar'))
-			end
-		end
+        url = 'default.png'
+        o[:plugin] = 'redmine_local_avatars'
+      end
+
+      image_tag url, o.except(:size).merge(width: size, height: size)
+    end
   end
 end
