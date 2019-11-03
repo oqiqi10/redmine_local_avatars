@@ -31,8 +31,11 @@ receiver.to_prepare  do
 	require_dependency 'principal'
 	require_dependency 'user'
 
+	avatars_helper = ApplicationHelper.method_defined?(:avatar) ?
+	                   ApplicationHelper : AvatarsHelper
+
 	AccountController.send(:include,  LocalAvatarsPlugin::AccountControllerPatch)
-	ApplicationHelper.send(:include,  LocalAvatarsPlugin::ApplicationAvatarPatch)
+	avatars_helper.send(:include,  LocalAvatarsPlugin::ApplicationAvatarPatch)
 	MyController.send(:include,  LocalAvatarsPlugin::MyControllerPatch)
 	User.send(:include,  LocalAvatarsPlugin::UsersAvatarPatch)
 	UsersController.send(:include,  LocalAvatarsPlugin::UsersControllerPatch)
