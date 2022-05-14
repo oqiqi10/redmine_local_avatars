@@ -16,21 +16,35 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
-require 'local_avatars'
+require File.expand_path('local_avatars', __dir__)
 
 module LocalAvatarsPlugin
-  module UsersHelperPatch
-    def self.included(base) # :nodoc:    
-      base.class_eval do      
-        alias_method :user_settings_tabs_without_avatar, :user_settings_tabs
-        alias_method :user_settings_tabs, :user_settings_tabs_with_avatar
-      end
-    end
+	module UsersControllerPatch
 
-		def user_settings_tabs_with_avatar
-			tabs = user_settings_tabs_without_avatar
-			tabs << {:name => 'avatar', :partial => 'my/avatar', :label => :label_avatar}
+		def self.included(base) # :nodoc:
+			base.class_eval do
+				helper :attachments
+				include AttachmentsHelper 
+			end
 		end
-  end
+
+		include LocalAvatars
+
+		def get_avatar
+			@user = User.find(params[:id])
+			send_avatar(@user)
+		end
+
+		def save_avatar
+			@user = User.find(params[:id])
+
+			begin
+				save_or_delete # see the LocalAvatars module
+			rescue
+				flash[:error] = @possible_error
+			end
+			redirect_to :action => 'edit', :id => @user
+		end
+	end
 end
 

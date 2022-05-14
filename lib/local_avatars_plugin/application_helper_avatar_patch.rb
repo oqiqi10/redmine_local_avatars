@@ -16,10 +16,10 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
-require 'local_avatars'
+require File.expand_path('local_avatars', __dir__)
 
 module LocalAvatarsPlugin
-  module ApplicationAvatarPatch
+  module ApplicationHelperAvatarPatch
     include GravatarHelper::PublicMethods
 
     def self.included(base) # :nodoc:    
