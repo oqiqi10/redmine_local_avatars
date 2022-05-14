@@ -25,32 +25,41 @@ Redmine::Plugin.register :redmine_local_avatars do
   version '1.0.5.2.0'
 end
 
+def init()
+  avatars_helper = ApplicationHelper.method_defined?(:avatar) ?
+                     ApplicationHelper : AvatarsHelper
+
+  AccountController.send(:include, LocalAvatarsPlugin::AccountControllerPatch)
+  avatars_helper.send(:include, LocalAvatarsPlugin::ApplicationHelperAvatarPatch)
+  MyController.send(:include, LocalAvatarsPlugin::MyControllerPatch)
+  User.send(:include, LocalAvatarsPlugin::UsersAvatarPatch)
+  UsersController.send(:include, LocalAvatarsPlugin::UsersControllerPatch)
+  UsersHelper.send(:include, LocalAvatarsPlugin::UsersHelperAvatarPatch)
+end
+
+if Rails.version > '6.0'
+  init()
+  return
+end
+
 receiver = Object.const_defined?('ActiveSupport::Reloader') ?  ActiveSupport::Reloader : ActionDispatch::Callbacks
 receiver.to_prepare  do
 	require_dependency 'project'
 	require_dependency 'principal'
 	require_dependency 'user'
 
-	avatars_helper = ApplicationHelper.method_defined?(:avatar) ?
-	                   ApplicationHelper : AvatarsHelper
-
-	AccountController.send(:include,  LocalAvatarsPlugin::AccountControllerPatch)
-	avatars_helper.send(:include,  LocalAvatarsPlugin::ApplicationAvatarPatch)
-	MyController.send(:include,  LocalAvatarsPlugin::MyControllerPatch)
-	User.send(:include,  LocalAvatarsPlugin::UsersAvatarPatch)
-	UsersController.send(:include,  LocalAvatarsPlugin::UsersControllerPatch)
-	UsersHelper.send(:include,  LocalAvatarsPlugin::UsersHelperPatch)
+	init()
 end
 
-require 'local_avatars'
+require 'local_avatars_plugin/local_avatars'
 
 # patches to Redmine
-require "account_controller_patch.rb"
-require "application_helper_avatar_patch.rb"
-require "my_controller_patch.rb"
-require "users_avatar_patch.rb"   # User model
-require "users_controller_patch.rb"
-require "users_helper_avatar_patch.rb"  # UsersHelper
+require "local_avatars_plugin/account_controller_patch.rb"
+require "local_avatars_plugin/application_helper_avatar_patch.rb"
+require "local_avatars_plugin/my_controller_patch.rb"
+require "local_avatars_plugin/users_avatar_patch.rb"   # User model
+require "local_avatars_plugin/users_controller_patch.rb"
+require "local_avatars_plugin/users_helper_avatar_patch.rb"  # UsersHelper
 
 # hooks
 require 'redmine_local_avatars/hooks'

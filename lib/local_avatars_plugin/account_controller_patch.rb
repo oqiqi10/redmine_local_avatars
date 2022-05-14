@@ -16,15 +16,23 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
-require 'local_avatars'
+require File.expand_path('local_avatars', __dir__)
 
 module LocalAvatarsPlugin
-  module UsersAvatarPatch
-    def self.included(base) # :nodoc:    
-      base.class_eval do      
-				acts_as_attachable
-      end
-    end
-  end
-end
+	module AccountControllerPatch
 
+		def self.included(base) # :nodoc:
+			base.class_eval do
+				helper :attachments
+				include AttachmentsHelper 
+			end
+		end
+
+		include LocalAvatars
+
+		def get_avatar
+			@user = User.find(params[:id])
+			send_avatar(@user)
+		end
+	end
+end
