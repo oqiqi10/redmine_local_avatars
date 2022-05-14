@@ -22,7 +22,7 @@ Redmine::Plugin.register :redmine_local_avatars do
   name 'Redmine Local Avatars plugin'
   author 'Andrew Chaika and Luca Pireddu'
   description 'This plugin lets users upload avatars directly into Redmine'
-  version '1.0.5.2.0'
+  version '1.0.5.3.0'
 end
 
 def init()
