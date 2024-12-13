@@ -56,6 +56,7 @@ module LocalAvatarsPlugin
         o[:plugin] = 'redmine_local_avatars'
       end
 
+      o[:title] = "#{user.name}"
       image_tag url, o.except(:size).merge(width: size, height: size)
     end
   end

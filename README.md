@@ -22,7 +22,7 @@ And restart your application server.
 
 ## Compatibility
 
-This current version on github is compatible with Redmine 2.1 - 4.0.
+This current version on github is compatible with Redmine 2.1 - 4.2.
 
 It has been imported from lp:redminelocalavatars
 incorporating the patch for 2.1 from chrisy at [https://bugs.launchpad.net/redminelocalavatars/+bug/1069808/comments/4](https://bugs.launchpad.net/redminelocalavatars/+bug/1069808/comments/4)
@@ -43,6 +43,7 @@ At the moment the plugin doesn't work when running in development mode.
 * http://www.redmine.org/boards/3/topics/5365
 * https://github.com/Ubik/redmine_local_avatars
 * https://github.com/ncoders/redmine_local_avatars
+* https://github.com/taqueci/redmine_local_avatars
 
 Luca Pireddu <pireddu@gmail.com> at CRS4 (http://www.crs4.it), 
 contributed updates and improvements.
